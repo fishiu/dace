@@ -1379,7 +1379,7 @@ class CPUCodeGen(TargetCodeGenerator):
         if instr is not None:
             instr.on_node_begin(sdfg, state_dfg, node, outer_stream_begin, inner_stream, function_stream)
 
-        inner_stream.write("\n    ///////////////////\n", sdfg, state_id, node)
+        inner_stream.write("\n    #pragma omp task\n    ///////////////////\n", sdfg, state_id, node)
 
         codegen.unparse_tasklet(sdfg, state_id, dfg, node, function_stream, inner_stream, self._locals, self._ldepth,
                                 self._toplevel_schedule)
@@ -1708,7 +1708,8 @@ class CPUCodeGen(TargetCodeGenerator):
         # TODO: Refactor to generate_scope_preamble once a general code
         #  generator (that CPU inherits from) is implemented
         if node.map.schedule == dtypes.ScheduleType.CPU_Multicore:
-            map_header += "#pragma omp parallel for"
+            map_header += "#pragma omp parallel\n"
+            map_header += "#pragma omp single"
             if node.map.omp_schedule != dtypes.OMPScheduleType.Default:
                 schedule = " schedule("
                 if node.map.omp_schedule == dtypes.OMPScheduleType.Static:
@@ -1801,6 +1802,7 @@ class CPUCodeGen(TargetCodeGenerator):
 
         result.write(outer_stream.getvalue())
 
+        callsite_stream.write('#pragma omp taskwait\n', sdfg, state_id, node)
         callsite_stream.write('}', sdfg, state_id, node)
 
     def _generate_ConsumeEntry(
