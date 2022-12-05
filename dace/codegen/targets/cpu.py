@@ -1709,7 +1709,7 @@ class CPUCodeGen(TargetCodeGenerator):
         #  generator (that CPU inherits from) is implemented
         if node.map.schedule == dtypes.ScheduleType.CPU_Multicore:
             map_header += "#pragma omp parallel\n"
-            map_header += "#pragma omp single\n{\n"
+            map_header += "#pragma omp single\n"
             map_header += "#pragma omp taskloop"
             if node.map.omp_schedule != dtypes.OMPScheduleType.Default:
                 schedule = " schedule("
@@ -1804,7 +1804,7 @@ class CPUCodeGen(TargetCodeGenerator):
         result.write(outer_stream.getvalue())
 
         callsite_stream.write('}', sdfg, state_id, node)
-        callsite_stream.write('}', sdfg, state_id, node)
+        # callsite_stream.write('}', sdfg, state_id, node)
 
     def _generate_ConsumeEntry(
         self,
