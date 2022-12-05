@@ -1709,7 +1709,8 @@ class CPUCodeGen(TargetCodeGenerator):
         #  generator (that CPU inherits from) is implemented
         if node.map.schedule == dtypes.ScheduleType.CPU_Multicore:
             map_header += "#pragma omp parallel\n"
-            map_header += "#pragma omp single"
+            map_header += "#pragma omp single\n{\n"
+            map_header += "#pragma omp taskloop"
             if node.map.omp_schedule != dtypes.OMPScheduleType.Default:
                 schedule = " schedule("
                 if node.map.omp_schedule == dtypes.OMPScheduleType.Static:
