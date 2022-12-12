@@ -388,7 +388,7 @@ inline void mandelbrot_17_4_0_0_2(mandelbrot_t *__state, const long long&  __tmp
 
 void __program_mandelbrot_internal(mandelbrot_t *__state, unsigned short * __restrict__ output, int H, int W, long long maxiter)
 {
-    int NT = 6 * omp_get_num_threads();
+    int NT = 2 * omp_get_num_threads();
     {
 
         {

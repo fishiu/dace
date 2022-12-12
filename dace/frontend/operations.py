@@ -72,7 +72,12 @@ def timethis(sdfg, title, flop_count, f, *args, **kwargs):
         print(title, GFLOPs, 'GFLOP/s       (', time_secs * 1000, 'ms)')
     else:
         time_secs = np.median(diffs)
+        std = np.std(diffs)
         print(title, time_secs * 1000, 'ms')
+        print(title, "std ", std)
+        with open(outfile_path, 'a') as f:
+            f.write('[time_secs],%.8f\n' % (time_secs))
+            f.write('[std],%.8f\n' % (std))
 
     return ret
 
