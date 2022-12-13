@@ -20,7 +20,7 @@ for file in files:
 
     plt.plot(x, y)
 
-    fig.savefig("eva/results-"+str(i)+".png")
+    fig.savefig("eva/"+file+".png")
 
     i = i + 1
 
