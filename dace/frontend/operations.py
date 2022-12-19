@@ -51,7 +51,8 @@ def timethis(sdfg, title, flop_count, f, *args, **kwargs):
         ret = f(*args, **kwargs)
         times[i + 1] = timer()
 
-    diffs = np.array([(times[i] - times[i - 1]) for i in range(1, REPS + 1)])
+    # add [2:] to avoid warmup or anything
+    diffs = np.array([(times[i] - times[i - 1]) for i in range(1, REPS + 1)])[2:]
 
     problem_size = sys.argv[1] if len(sys.argv) >= 2 else 0
 

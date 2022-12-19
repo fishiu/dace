@@ -12,7 +12,7 @@ for file in files:
     data = list(reader)
     
     fig = plt.figure()
-    x = list(range(1, 51))
+    x = list(range(1, 21))
     y = list()
 
     for j in range(1, len(data)-2):

@@ -1,0 +1,431 @@
+/* DaCe AUTO-GENERATED FILE. DO NOT MODIFY */
+#include <dace/dace.h>
+#include "../../include/hash.h"
+
+struct mandelbrot_t {
+
+};
+
+inline void mandelbrot_17_4_0_0_2(mandelbrot_t *__state, const long long&  __tmp_23_53_r, unsigned short&  __tmp_29_8_w, int H, int W, long long px, long long py) {
+    double __tmp12;
+    double __tmp14;
+    double __tmp18;
+    double __tmp22;
+    double x0;
+    double y0;
+    double x;
+    double y;
+    double xtemp;
+    long long iteration;
+    bool __tmp15;
+    bool __tmp16;
+
+    {
+        double __tmp1;
+        double __tmp2;
+        double __tmp3;
+        double __tmp5;
+        double __tmp6;
+        double __tmp7;
+
+        #pragma omp parallel sections
+        {
+            #pragma omp section
+            {
+                {
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_convert_to_float64_)
+                    __out = dace::float64(px);
+                    ///////////////////
+
+                    __tmp1 = __out;
+                }
+                {
+                    double __in1 = __tmp1;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Div_)
+                    __out = (__in1 / dace::float64(W));
+                    ///////////////////
+
+                    __tmp2 = __out;
+                }
+                {
+                    double __in1 = __tmp2;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Mult_)
+                    __out = (__in1 * 3.5);
+                    ///////////////////
+
+                    __tmp3 = __out;
+                }
+                {
+                    double __in2 = __tmp3;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Add_)
+                    __out = ((- 2.5) + __in2);
+                    ///////////////////
+
+                    x0 = __out;
+                }
+            } // End omp section
+            #pragma omp section
+            {
+                {
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_convert_to_float64_)
+                    __out = dace::float64(py);
+                    ///////////////////
+
+                    __tmp5 = __out;
+                }
+                {
+                    double __in1 = __tmp5;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Div_)
+                    __out = (__in1 / dace::float64(H));
+                    ///////////////////
+
+                    __tmp6 = __out;
+                }
+                {
+                    double __in1 = __tmp6;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Mult_)
+                    __out = (__in1 * dace::float64(2));
+                    ///////////////////
+
+                    __tmp7 = __out;
+                }
+                {
+                    double __in2 = __tmp7;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Add_)
+                    __out = (dace::float64((- 1)) + __in2);
+                    ///////////////////
+
+                    y0 = __out;
+                }
+            } // End omp section
+            #pragma omp section
+            {
+                {
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (assign_20_8)
+                    __out = 0.0;
+                    ///////////////////
+
+                    x = __out;
+                }
+            } // End omp section
+            #pragma omp section
+            {
+                {
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (assign_21_8)
+                    __out = 0.0;
+                    ///////////////////
+
+                    y = __out;
+                }
+            } // End omp section
+        } // End omp sections
+
+    }
+    iteration = 0;
+    __state_1_while_guard:;
+
+    {
+
+        {
+            double __in1 = x;
+            double __in2 = x;
+            double __out;
+
+            ///////////////////
+            // Tasklet code (_Mult_)
+            __out = (__in1 * __in2);
+            ///////////////////
+
+            __tmp12 = __out;
+        }
+
+    }
+    {
+        double __tmp13;
+
+        {
+            double __in1 = y;
+            double __in2 = y;
+            double __out;
+
+            ///////////////////
+            // Tasklet code (_Mult_)
+            __out = (__in1 * __in2);
+            ///////////////////
+
+            __tmp13 = __out;
+        }
+        {
+            double __in1 = __tmp12;
+            double __in2 = __tmp13;
+            double __out;
+
+            ///////////////////
+            // Tasklet code (_Add_)
+            __out = (__in1 + __in2);
+            ///////////////////
+
+            __tmp14 = __out;
+        }
+
+    }
+    __tmp15 = (__tmp14 < 4);
+    __tmp16 = (iteration < __tmp_23_53_r);
+
+    if ((__tmp15 && __tmp16)) {
+        goto __state_1_while_23;
+    }
+    if ((! (__tmp15 && __tmp16))) {
+        goto __state_1_assign_29_8;
+    }
+    __state_1_assign_29_8:;
+    {
+
+        {
+            unsigned short __out;
+
+            ///////////////////
+            // Tasklet code (assign_29_8)
+            __out = iteration;
+            ///////////////////
+
+            __tmp_29_8_w = __out;
+        }
+
+    }
+    goto __state_exit_1;
+    goto __state_exit_1;
+    __state_1_while_23:;
+
+    {
+
+        {
+            double __in1 = x;
+            double __in2 = x;
+            double __out;
+
+            ///////////////////
+            // Tasklet code (_Mult_)
+            __out = (__in1 * __in2);
+            ///////////////////
+
+            __tmp18 = __out;
+        }
+
+    }
+    {
+        double __tmp19;
+        double __tmp20;
+
+        #pragma omp parallel sections
+        {
+            #pragma omp section
+            {
+                {
+                    double __in1 = y;
+                    double __in2 = y;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Mult_)
+                    __out = (__in1 * __in2);
+                    ///////////////////
+
+                    __tmp19 = __out;
+                }
+                {
+                    double __in1 = __tmp18;
+                    double __in2 = __tmp19;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Sub_)
+                    __out = (__in1 - __in2);
+                    ///////////////////
+
+                    __tmp20 = __out;
+                }
+                {
+                    double __in2 = x0;
+                    double __in1 = __tmp20;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Add_)
+                    __out = (__in1 + __in2);
+                    ///////////////////
+
+                    xtemp = __out;
+                }
+            } // End omp section
+            #pragma omp section
+            {
+                {
+                    double __in2 = x;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Mult_)
+                    __out = (dace::float64(2) * __in2);
+                    ///////////////////
+
+                    __tmp22 = __out;
+                }
+            } // End omp section
+        } // End omp sections
+
+    }
+    {
+        double __tmp23;
+        double __tmp24;
+
+        #pragma omp parallel sections
+        {
+            #pragma omp section
+            {
+                {
+                    double __in1 = __tmp22;
+                    double __in2 = y;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Mult_)
+                    __out = (__in1 * __in2);
+                    ///////////////////
+
+                    __tmp23 = __out;
+                }
+                {
+                    double __in2 = y0;
+                    double __in1 = __tmp23;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (_Add_)
+                    __out = (__in1 + __in2);
+                    ///////////////////
+
+                    __tmp24 = __out;
+                }
+                {
+                    double __inp = __tmp24;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (assign_25_12)
+                    __out = __inp;
+                    ///////////////////
+
+                    y = __out;
+                }
+            } // End omp section
+            #pragma omp section
+            {
+                {
+                    double __inp = xtemp;
+                    double __out;
+
+                    ///////////////////
+                    // Tasklet code (assign_26_12)
+                    __out = __inp;
+                    ///////////////////
+
+                    x = __out;
+                }
+            } // End omp section
+        } // End omp sections
+
+    }
+    iteration = (iteration + 1);
+    goto __state_1_while_guard;
+    __state_exit_1:;
+    
+}
+
+void __program_mandelbrot_internal(mandelbrot_t *__state, unsigned short * __restrict__ output, int H, int W, long long maxiter)
+{
+    const char* ALPHA = std::getenv("ALPHA");
+    const char* NUM_THREADS = std::getenv("NUM_THREADS");
+    int i = 0, j = 0;
+    int alpha = 0, num_th = 0;
+    while (ALPHA[i] != '\0') {
+        alpha *= 10;
+        alpha += ALPHA[i++] - '0';
+    }
+    while (NUM_THREADS[j] != '\0') {
+        num_th *= 10;
+        num_th += NUM_THREADS[j++] - '0';
+    }
+    // printf("=======alpha: %d, num_th: %d", alpha, num_th);
+
+    int NT = alpha * num_th;
+    {
+        {
+            // #pragma omp parallel num_threads(num_th)
+            // #pragma omp single
+            // #pragma omp taskloop num_tasks(NT)
+            #pragma omp parallel for num_threads(num_th)
+            for (auto py = 0; py < H; py += 1) {
+                for (auto px = 0; px < W; px += 1) {
+                    mandelbrot_17_4_0_0_2(__state, maxiter, output[((W * py) + px)], H, W, px, py);
+                }
+            }
+        }
+
+    }
+}
+
+DACE_EXPORTED void __program_mandelbrot(mandelbrot_t *__state, unsigned short * __restrict__ output, int H, int W, long long maxiter)
+{
+    __program_mandelbrot_internal(__state, output, H, W, maxiter);
+}
+
+DACE_EXPORTED mandelbrot_t *__dace_init_mandelbrot(int H, int W)
+{
+    int __result = 0;
+    mandelbrot_t *__state = new mandelbrot_t;
+
+
+
+    if (__result) {
+        delete __state;
+        return nullptr;
+    }
+    return __state;
+}
+
+DACE_EXPORTED void __dace_exit_mandelbrot(mandelbrot_t *__state)
+{
+    delete __state;
+}
+
