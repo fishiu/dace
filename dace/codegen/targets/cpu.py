@@ -1707,41 +1707,60 @@ class CPUCodeGen(TargetCodeGenerator):
 
         # TODO: Refactor to generate_scope_preamble once a general code
         #  generator (that CPU inherits from) is implemented
+        task_flag = False
         if node.map.schedule == dtypes.ScheduleType.CPU_Multicore:
-            map_header += "#pragma omp parallel for"
-            if node.map.omp_schedule != dtypes.OMPScheduleType.Default:
-                schedule = " schedule("
-                if node.map.omp_schedule == dtypes.OMPScheduleType.Static:
-                    schedule += "static"
-                elif node.map.omp_schedule == dtypes.OMPScheduleType.Dynamic:
-                    schedule += "dynamic"
-                elif node.map.omp_schedule == dtypes.OMPScheduleType.Guided:
-                    schedule += "guided"
-                else:
-                    raise ValueError("Unknown OpenMP schedule type")
-                if node.map.omp_chunk_size > 0:
-                    schedule += f", {node.map.omp_chunk_size}"
-                schedule += ")"
-                map_header += schedule
-            if node.map.omp_num_threads > 0:
-                map_header += f" num_threads({node.map.omp_num_threads})"
-            if node.map.collapse > 1:
-                map_header += ' collapse(%d)' % node.map.collapse
-            # Loop over outputs, add OpenMP reduction clauses to detected cases
-            # TODO: set up register outside loop
-            # exit_node = dfg.exit_node(node)
-            reduction_stmts = []
-            # for outedge in dfg.in_edges(exit_node):
-            #    if (isinstance(outedge.src, nodes.CodeNode)
-            #            and outedge.data.wcr is not None):
-            #        redt = operations.detect_reduction_type(outedge.data.wcr)
-            #        if redt != dtypes.ReductionType.Custom:
-            #            reduction_stmts.append('reduction({typ}:{var})'.format(
-            #                typ=_REDUCTION_TYPE_TO_OPENMP[redt],
-            #                var=outedge.src_conn))
-            #            reduced_variables.append(outedge)
+            for n, sg in dfg.all_nodes_recursive():
+                if "while_guard" in str(n) \
+                        or "if_guard" in str(n) or "endif" in str(n):
+                    task_flag = True
+                    break
+                if 'guard' == str(n)[0:5]:
+                    for ee, sg2 in sg.all_edges_recursive():
+                        if n.name == ee.src.name and 'endfor' in ee.dst.name:
+                            for pm in node.map.params:
+                                if pm in ee.data.condition.as_string:
+                                    task_flag = True
+                                    break
+                            break
+            if task_flag:
+                map_header += "#pragma omp parallel\n"
+                map_header += "#pragma omp single\n"
+                map_header += "#pragma omp taskloop\n"
+            else:
+                map_header += "#pragma omp parallel for"
+                if node.map.omp_schedule != dtypes.OMPScheduleType.Default:
+                    schedule = " schedule("
+                    if node.map.omp_schedule == dtypes.OMPScheduleType.Static:
+                        schedule += "static"
+                    elif node.map.omp_schedule == dtypes.OMPScheduleType.Dynamic:
+                        schedule += "dynamic"
+                    elif node.map.omp_schedule == dtypes.OMPScheduleType.Guided:
+                        schedule += "guided"
+                    else:
+                        raise ValueError("Unknown OpenMP schedule type")
+                    if node.map.omp_chunk_size > 0:
+                        schedule += f", {node.map.omp_chunk_size}"
+                    schedule += ")"
+                    map_header += schedule
+                if node.map.omp_num_threads > 0:
+                    map_header += f" num_threads({node.map.omp_num_threads})"
+                if node.map.collapse > 1:
+                    map_header += ' collapse(%d)' % node.map.collapse
+                # Loop over outputs, add OpenMP reduction clauses to detected cases
+                # TODO: set up register outside loop
+                # exit_node = dfg.exit_node(node)
+                reduction_stmts = []
+                # for outedge in dfg.in_edges(exit_node):
+                #    if (isinstance(outedge.src, nodes.CodeNode)
+                #            and outedge.data.wcr is not None):
+                #        redt = operations.detect_reduction_type(outedge.data.wcr)
+                #        if redt != dtypes.ReductionType.Custom:
+                #            reduction_stmts.append('reduction({typ}:{var})'.format(
+                #                typ=_REDUCTION_TYPE_TO_OPENMP[redt],
+                #                var=outedge.src_conn))
+                #            reduced_variables.append(outedge)
 
-            map_header += " %s\n" % ", ".join(reduction_stmts)
+                map_header += " %s\n" % ", ".join(reduction_stmts)
 
         # TODO: Explicit map unroller
         if node.map.unroll:
@@ -1751,15 +1770,14 @@ class CPUCodeGen(TargetCodeGenerator):
         constsize = all([not symbolic.issymbolic(v, sdfg.constants) for r in node.map.range for v in r])
 
         # Nested loops
-        result.write(map_header, sdfg, state_id, node)
         for i, r in enumerate(node.map.range):
             # var = '__DACEMAP_%s_%d' % (node.map.label, i)
             var = map_params[i]
             begin, end, skip = r
 
+            result.write(map_header, sdfg, state_id, node)
             if node.map.unroll:
                 result.write("#pragma unroll", sdfg, state_id, node)
-
             result.write(
                 "for (auto %s = %s; %s < %s; %s += %s) {\n" %
                 (var, cpp.sym2cpp(begin), var, cpp.sym2cpp(end + 1), var, cpp.sym2cpp(skip)),
